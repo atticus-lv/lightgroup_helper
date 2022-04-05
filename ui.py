@@ -167,8 +167,11 @@ class LGH_PT_ToolPanel(bpy.types.Panel):
             col.use_property_decorate = False
 
             row = col.row(align=True)
-            row.label(text=lightgroup_item.name)
-            row.operator('view.select_obj_by_lightgroup', text='Select All',
+            row.operator('lgh.rename_light_group', text=lightgroup_item.name).lightgroup_name = lightgroup_item.name
+
+            row.separator(factor=2)
+
+            row.operator('view.select_obj_by_lightgroup', text='All',
                          icon="RESTRICT_SELECT_OFF").lightgroup = lightgroup_item.name
 
             col.separator()

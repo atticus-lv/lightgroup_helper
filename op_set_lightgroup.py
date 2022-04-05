@@ -88,9 +88,47 @@ class LGH_OT_set_light_group(bpy.types.Operator):
         return {'FINISHED'}
 
 
+# rename lightgroup
+class LGH_OT_rename_light_group(bpy.types.Operator):
+    bl_idname = 'lgh.rename_light_group'
+    bl_label = 'Rename'
+    bl_option = {'REGISTER', 'UNDO'}
+
+    lightgroup_name: bpy.props.StringProperty(name="Light Group Name")
+    new_name: bpy.props.StringProperty(name="New Name", default="")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, 'new_name')
+
+    def execute(self, context):
+        # get obj list in lightgroup
+        from .ui import get_obj_list_in_lightgroup
+        fit_list = get_obj_list_in_lightgroup(self.lightgroup_name)
+
+        if self.new_name in [lg.name for lg in context.view_layer.lightgroups]:
+            self.report({'ERROR'}, "Light Group Already Exists")
+            return {'CANCELLED'}
+
+        context.view_layer.lightgroups[self.lightgroup_name].name = self.new_name
+
+        for obj in fit_list:
+            obj.lightgroup = self.new_name
+
+        redraw_area()
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        self.new_name = self.lightgroup_name
+        return wm.invoke_props_dialog(self)
+
+
 def register():
     bpy.utils.register_class(LGH_OT_set_light_group)
+    bpy.utils.register_class(LGH_OT_rename_light_group)
 
 
 def unregister():
     bpy.utils.unregister_class(LGH_OT_set_light_group)
+    bpy.utils.unregister_class(LGH_OT_rename_light_group)
