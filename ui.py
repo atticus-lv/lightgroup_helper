@@ -33,11 +33,10 @@ def get_obj_list_in_lightgroup(lightgroup_name):
 
 class LGH_PT_Panel(bpy.types.Panel):
     bl_label = "Light Group"
-    bl_region_type = "UI"
+    bl_region_type = 'UI'
     bl_category = "LGH"
     bl_space_type = "VIEW_3D"
-    bl_options = {"DEFAULT_CLOSED"}
-
+    bl_option = {'DEFAULT_CLOSED'}
     def draw(self, context):
         if bpy.app.version < (3, 2, 0): return
 
@@ -120,7 +119,7 @@ class LGH_PT_ObjectPanel(bpy.types.Panel):
         row.scale_y = 1.15
         row.scale_x = 1.25
         row.alignment = 'CENTER'
-        row.prop(ob, "display_type", text='')
+        row.prop(ob, "display_type")
 
 
 class LGH_PT_ToolPanel(bpy.types.Panel):
@@ -140,6 +139,9 @@ class LGH_PT_ToolPanel(bpy.types.Panel):
         row = layout.row(align=True)
         row.operator('view.set_active_obj', icon="OBJECT_DATA" if obj.type != 'LIGHT' else "LIGHT",
                      text=obj.name).obj_name = obj.name
+        row.separator()
+        row.prop(obj,'hide_viewport',text = '')
+        row.prop(obj,'hide_render',text = '')
         # row.prop_search(obj, "lightgroup", view_layer, "lightgroups", text="")
 
     def draw_active_lightgroup_obj_list(self, context, layout):
@@ -168,13 +170,16 @@ class LGH_PT_ToolPanel(bpy.types.Panel):
             col.use_property_decorate = False
 
             row = col.row(align=True)
+            row.scale_x = 1.15
+            row.operator('view.solo_lightgroup_object', text='', icon='EVENT_S').lightgroup = lightgroup_item.name
+            row.separator(factor=1)
             row.operator('lgh.rename_light_group', text=lightgroup_item.name).lightgroup_name = lightgroup_item.name
 
             row.separator(factor=2)
 
-            row.operator('view.select_obj_by_lightgroup', text='All',
+            row.operator('view.toggle_lightgroup_visibility',icon = 'HIDE_OFF',text = '').lightgroup = lightgroup_item.name
+            row.operator('view.select_obj_by_lightgroup', text='',
                          icon="RESTRICT_SELECT_OFF").lightgroup = lightgroup_item.name
-
             col.separator()
 
             if len(fit_list) == 0: col.label(text='Nothing in this Light Group')
@@ -184,12 +189,14 @@ class LGH_PT_ToolPanel(bpy.types.Panel):
 
 
 def register():
-    bpy.utils.register_class(LGH_PT_Panel)
     bpy.utils.register_class(LGH_PT_ObjectPanel)
     bpy.utils.register_class(LGH_PT_ToolPanel)
+    bpy.utils.register_class(LGH_PT_Panel)
+
 
 
 def unregister():
-    bpy.utils.unregister_class(LGH_PT_Panel)
     bpy.utils.unregister_class(LGH_PT_ObjectPanel)
     bpy.utils.unregister_class(LGH_PT_ToolPanel)
+    bpy.utils.unregister_class(LGH_PT_Panel)
+
