@@ -36,6 +36,7 @@ class LGH_PT_Panel(bpy.types.Panel):
     bl_region_type = "UI"
     bl_category = "LGH"
     bl_space_type = "VIEW_3D"
+    bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
         if bpy.app.version < (3, 2, 0): return
