@@ -37,6 +37,7 @@ class LGH_PT_Panel(bpy.types.Panel):
     bl_category = "LGH"
     bl_space_type = "VIEW_3D"
     bl_option = {'DEFAULT_CLOSED'}
+
     def draw(self, context):
         if bpy.app.version < (3, 2, 0): return
 
@@ -137,29 +138,18 @@ class LGH_PT_ToolPanel(bpy.types.Panel):
 
     def draw_single_lightgroup(self, view_layer, obj, layout):
         row = layout.row(align=True)
+        # solo light in light group
+        solo = row.operator('view.solo_light_in_lightgroup', text='', icon='EVENT_S')
+        solo.lightgroup = obj.lightgroup
+        solo.obj_name = obj.name
+        row.separator()
+        # select objects
         row.operator('view.set_active_obj', icon="OBJECT_DATA" if obj.type != 'LIGHT' else "LIGHT",
                      text=obj.name).obj_name = obj.name
         row.separator()
-        row.prop(obj,'hide_viewport',text = '')
-        row.prop(obj,'hide_render',text = '')
-        # row.prop_search(obj, "lightgroup", view_layer, "lightgroups", text="")
-
-    def draw_active_lightgroup_obj_list(self, context, layout):
-        view_layer = context.view_layer
-        lightgroup_name = view_layer.lightgroups[view_layer.active_lightgroup_index].name
-
-        fit_list = get_obj_list_in_lightgroup(lightgroup_name)
-
-        col = layout.column()
-
-        if len(fit_list) == 0:
-            col.label(text='Nothing in this Light Group')
-            return
-
-        for obj in fit_list:
-            col.prop(view_layer.lightgroups[view_layer.active_lightgroup_index], 'name', text='')
-
-            self.draw_single_lightgroup(view_layer, obj, col)
+        # object property
+        row.prop(obj, 'hide_viewport', text='')
+        row.prop(obj, 'hide_render', text='')
 
     def draw_all_lightgroups(self, context, layout):
 
@@ -177,7 +167,8 @@ class LGH_PT_ToolPanel(bpy.types.Panel):
 
             row.separator(factor=2)
 
-            row.operator('view.toggle_lightgroup_visibility',icon = 'HIDE_OFF',text = '').lightgroup = lightgroup_item.name
+            row.operator('view.toggle_lightgroup_visibility', icon='HIDE_OFF',
+                         text='').lightgroup = lightgroup_item.name
             row.operator('view.select_obj_by_lightgroup', text='',
                          icon="RESTRICT_SELECT_OFF").lightgroup = lightgroup_item.name
             col.separator()
@@ -194,9 +185,7 @@ def register():
     bpy.utils.register_class(LGH_PT_Panel)
 
 
-
 def unregister():
     bpy.utils.unregister_class(LGH_PT_ObjectPanel)
     bpy.utils.unregister_class(LGH_PT_ToolPanel)
     bpy.utils.unregister_class(LGH_PT_Panel)
-
