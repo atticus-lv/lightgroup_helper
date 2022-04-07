@@ -82,7 +82,7 @@ class LGH_OT_set_light_group(bpy.types.Operator):
                     else:
                         layout.operator(cls.bl_idname, icon='LIGHT')
 
-            context.window_manager.popup_menu(draw_all_coll, title=f"Set Light Group {len(context.s)} objects selected")
+            context.window_manager.popup_menu(draw_all_coll, title=f"Set Light Group {len(context.selected_objects)} objects selected")
             redraw_area()
 
         return {'FINISHED'}
