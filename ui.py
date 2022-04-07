@@ -180,12 +180,12 @@ class LGH_PT_ToolPanel(bpy.types.Panel):
 
 
 def register():
+    bpy.utils.register_class(LGH_PT_Panel)
     bpy.utils.register_class(LGH_PT_ObjectPanel)
     bpy.utils.register_class(LGH_PT_ToolPanel)
-    bpy.utils.register_class(LGH_PT_Panel)
 
 
 def unregister():
+    bpy.utils.unregister_class(LGH_PT_Panel)
     bpy.utils.unregister_class(LGH_PT_ObjectPanel)
     bpy.utils.unregister_class(LGH_PT_ToolPanel)
-    bpy.utils.unregister_class(LGH_PT_Panel)
