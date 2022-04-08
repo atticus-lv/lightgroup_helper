@@ -2,7 +2,7 @@ bl_info = {
     "name": "Light Group Helper",
     "author": "Atticus",
     "blender": (3, 2, 0),
-    "version": (0, 3),
+    "version": (0, 4),
     "category": "Lighting",
     "support": "COMMUNITY",
     "doc_url": "",
