@@ -132,7 +132,11 @@ class LGH_PT_ToolPanel(bpy.types.Panel):
     def draw(self, context, ):
         layout = self.layout
         layout.scale_y = 1.2
-        layout.operator('lgh.set_light_group')
+        row = layout.row(align=True)
+        row.alignment = 'CENTER'
+        row.operator('lgh.set_light_group')
+        row.separator()
+        row.operator('view.reset_solo_lightgroup')
 
         self.draw_all_lightgroups(context, layout)
 
@@ -171,6 +175,10 @@ class LGH_PT_ToolPanel(bpy.types.Panel):
                          text='').lightgroup = lightgroup_item.name
             row.operator('view.select_obj_by_lightgroup', text='',
                          icon="RESTRICT_SELECT_OFF").lightgroup = lightgroup_item.name
+
+            row.separator(factor=2)
+            row.operator('lgh.remove_light_group',icon = 'X',text = '').lightgroup_name = lightgroup_item.name
+
             col.separator()
 
             if len(fit_list) == 0: col.label(text='Nothing in this Light Group')

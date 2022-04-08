@@ -109,6 +109,24 @@ class VIEW_OT_solo_light_in_lightgroup(bpy.types.Operator):
 
         return {'FINISHED'}
 
+# reset all solo with light group
+class VIEW_OT_reset_solo_lightgroup(bpy.types.Operator):
+    bl_idname = "view.reset_solo_lightgroup"
+    bl_label = "Reset Solo"
+    bl_option = {'INTERNAL', 'UNDO'}
+
+    def execute(self, context):
+        # get all lightgroup objects
+        from .ui import get_obj_list_in_lightgroup
+        for lightgroup_item in context.view_layer.lightgroups:
+            obj_list = get_obj_list_in_lightgroup(lightgroup_item.name)
+            for obj in obj_list:
+                obj.hide_viewport = False
+                obj.hide_render = False
+
+
+        return {'FINISHED'}
+
 
 def register():
     bpy.utils.register_class(VIEW_OT_set_active_obj)
@@ -116,6 +134,7 @@ def register():
     bpy.utils.register_class(VIEW_OT_toggle_lightgroup_visibility)
     bpy.utils.register_class(VIEW_OT_solo_lightgroup_object)
     bpy.utils.register_class(VIEW_OT_solo_light_in_lightgroup)
+    bpy.utils.register_class(VIEW_OT_reset_solo_lightgroup)
 
 
 def unregister():
@@ -124,3 +143,4 @@ def unregister():
     bpy.utils.unregister_class(VIEW_OT_toggle_lightgroup_visibility)
     bpy.utils.unregister_class(VIEW_OT_solo_lightgroup_object)
     bpy.utils.unregister_class(VIEW_OT_solo_light_in_lightgroup)
+    bpy.utils.unregister_class(VIEW_OT_reset_solo_lightgroup)

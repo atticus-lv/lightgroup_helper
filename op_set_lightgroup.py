@@ -82,7 +82,8 @@ class LGH_OT_set_light_group(bpy.types.Operator):
                     else:
                         layout.operator(cls.bl_idname, icon='LIGHT')
 
-            context.window_manager.popup_menu(draw_all_coll, title=f"Set Light Group {len(context.selected_objects)} objects selected")
+            context.window_manager.popup_menu(draw_all_coll,
+                                              title=f"Set Light Group {len(context.selected_objects)} objects selected")
             redraw_area()
 
         return {'FINISHED'}
@@ -92,7 +93,7 @@ class LGH_OT_set_light_group(bpy.types.Operator):
 class LGH_OT_rename_light_group(bpy.types.Operator):
     bl_idname = 'lgh.rename_light_group'
     bl_label = 'Rename'
-    bl_option = {'REGISTER', 'UNDO'}
+    bl_option = {'UNDO_GROUPED'}
 
     lightgroup_name: bpy.props.StringProperty(name="Light Group Name")
     new_name: bpy.props.StringProperty(name="New Name", default="")
@@ -124,11 +125,38 @@ class LGH_OT_rename_light_group(bpy.types.Operator):
         return wm.invoke_props_dialog(self)
 
 
+# remove lightgroup
+class LGH_OT_remove_light_group(bpy.types.Operator):
+    bl_idname = 'lgh.remove_light_group'
+    bl_label = 'Remove'
+    bl_option = {'UNDO_GROUPED'}
+
+    lightgroup_name: bpy.props.StringProperty(name="Light Group Name")
+
+    def execute(self, context):
+        # get obj list in lightgroup
+        from .ui import get_obj_list_in_lightgroup
+        fit_list = get_obj_list_in_lightgroup(self.lightgroup_name)
+
+        for i, lightgroup_item in enumerate(context.view_layer.lightgroups):
+            if lightgroup_item.name == self.lightgroup_name:
+                bpy.ops.scene.view_layer_remove_lightgroup(i)
+                break
+
+        for obj in fit_list:
+            obj.lightgroup = ""
+
+        redraw_area()
+        return {'FINISHED'}
+
+
 def register():
     bpy.utils.register_class(LGH_OT_set_light_group)
     bpy.utils.register_class(LGH_OT_rename_light_group)
+    bpy.utils.register_class(LGH_OT_remove_light_group)
 
 
 def unregister():
     bpy.utils.unregister_class(LGH_OT_set_light_group)
     bpy.utils.unregister_class(LGH_OT_rename_light_group)
+    bpy.utils.unregister_class(LGH_OT_remove_light_group)
